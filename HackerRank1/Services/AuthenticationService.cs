@@ -1,16 +1,16 @@
-﻿using HackerRank1.DTO;
+using HackerRank1.DTO;
 
 namespace HackerRank1.Services;
 
 public interface IAuthenticationService
 {
-    Task<User> AuthenticateAsync(string email, string password);
+    Task<User?> AuthenticateAsync(string email, string password);
 }
 
 public class AuthenticationService : IAuthenticationService
 {
 
-    public async Task<User> AuthenticateAsync(string email, string password)
+    public async Task<User?> AuthenticateAsync(string email, string password)
     {
         if (email == "admin" && password == "1234")
         {
