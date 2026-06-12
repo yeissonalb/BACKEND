@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using LibraryService.WebAPI.Data;
 using LibraryService.WebAPI.Services;
 using Microsoft.AspNetCore.Authorization;
+using LibraryService.WebAPI.DTO;
 
 namespace LibraryService.WebAPI.Controllers
 {
@@ -21,11 +22,32 @@ namespace LibraryService.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetAll(int libraryId)
         {
+            var library = (await _librariesService.Get(new[] { libraryId })).FirstOrDefault();
+            if (library == null)
+                return NotFound();
+
             var books = await _booksService.Get(libraryId, null);
             return Ok(books);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Add(int libraryId, [FromBody] BookForm bookForm)
+        {
+            var library = (await _librariesService.Get(new[] { libraryId })).FirstOrDefault();
+            if (library == null)
+                return NotFound();
+
+            var book = new Book
+            {
+                Name = bookForm.Name,
+                Category = bookForm.Category,
+                LibraryId = libraryId
+            };
+
+            var createdBook = await _booksService.Add(book);
+            return StatusCode(201, createdBook);
         }
     }
 }
